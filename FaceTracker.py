@@ -8,18 +8,23 @@ pTime = 0
 cTime = 0
 
 mpDraw = mp.solutions.drawing_utils
-mpFaceMesh = mp.solutions.face_mesh
-faceMesh = mpFaceMesh.FaceMesh()
+mpFaceDetection = mp.solutions.face_detection
+mpDraw = mp.solutions.drawing_utils
+faceDetection = mpFaceDetection.FaceDetection()
 
 while True:
     success, img = cap.read()
     
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    results = faceMesh.process(imgRGB)
+    results = faceDetection.process(imgRGB)
     
-    if results.multi_face_landmarks:
-        for faceLms in results.multi_face_landmarks:
-            mpDraw.draw_landmarks(img, faceLms, mpFaceMesh.FACEMESH_CONTOURS)
+    if results.detections:
+        for id, detection in enumerate(results.detections):
+            bboxC = detection.location_data.relative_bounding_box
+            ih, iw, ic = img.shape
+            bbox = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
+            
+            cv2.rectangle(img, bbox, (255, 255, 0), 2)
     
     cTime = time.time()
     fps = 1/ (cTime - pTime)
