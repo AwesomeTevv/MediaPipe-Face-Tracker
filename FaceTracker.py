@@ -4,7 +4,8 @@ import time
 
 cap = cv2.VideoCapture(0)
 
-pTime, cTime = 0
+pTime = 0 
+cTime = 0
 
 while True:
     success, img = cap.read()
